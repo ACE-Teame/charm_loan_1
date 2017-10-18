@@ -58,6 +58,13 @@ class IndexController extends Home_Controller
         if(empty($data['is_agree'])) {
             ajaxReturn(202, '请先阅读申请合约');
         }
+        unset($data['address'], $data['quato'], $data['c'], $data['is_agree']);
+
+        // 根据 姓名+身份证号+手机号+申请银行判断申请是否存在
+        $count = parent::$model->count('order', $data);
+        if (!empty($count)) {
+            ajaxReturn(202, '申请正在审核中，请勿重复提交！');
+        }
     }
 
     /**

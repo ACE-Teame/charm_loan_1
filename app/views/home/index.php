@@ -52,7 +52,7 @@
                 <input type="hidden" name="c" value="<?php echo $c ?>">
                 <input type="hidden" name="is_agree" id="is_agree" value="1">
             </form>
-            <a href="javascript:;" class="btn" id="submit_application">立即提交订单</a>
+            <a href="javascript:;" class="btn" onClick="submit_application(this)">立即提交申请</a>
 
 
             <div class="box">
@@ -71,6 +71,9 @@
     <?php echo js('jquery.min.js') ?>
     <script>
 
+        /**
+         * 点击同意阅读条约事件
+         */
         function agree_change(it)
         {
             if ($(it).is(':checked')) {
@@ -80,30 +83,32 @@
             }
         }
 
-        $(document).ready(function() {
-
-            $('#submit_application').click(function() {
-                if($('#agree-id').is(':checked')) {
-                    $.ajax({
-                        url: '<?php echo base_url('index/submitApplication') ?>',
-                        type: 'POST',
-                        dataType: 'json',
-                        data: $('#form_application').serialize(),
-                        success:function(data) {
-                            if(data.status == 200) {
-                                alert('申请成功，请等待审核...');
-                                location.reload();
-                            }else {
-                                alert(data.msg);
-                            }
+        /**
+         * 提交申请
+         */
+        function submit_application(it)
+        {
+            $(it).removeAttr('onClick');
+            if($('#agree-id').is(':checked')) {
+                $.ajax({
+                    url: '<?php echo base_url('index/submitApplication') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $('#form_application').serialize(),
+                    success:function(data) {
+                        if(data.status == 200) {
+                            alert('申请成功，请等待审核...');
+                            location.reload();
+                        }else {
+                            $(it).attr('onClick', 'submit_application(this)');
+                            alert(data.msg);
                         }
-                    })
-                }else {
-                    alert('请先阅读申请合约')
-                }
-                
-            });
-        });
+                    }
+                })
+            }else {
+                alert('请先阅读申请合约')
+            }
+        }
 
     </script>
 </body>
